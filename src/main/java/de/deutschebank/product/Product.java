@@ -1,4 +1,4 @@
-package de.deutschebank;
+package de.deutschebank.product;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

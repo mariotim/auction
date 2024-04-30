@@ -1,4 +1,4 @@
-package de.deutschebank;
+package de.deutschebank.user;
 
 
 import jakarta.persistence.Entity;
