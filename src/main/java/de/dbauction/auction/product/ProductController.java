@@ -17,7 +17,7 @@ public class ProductController {
         this.productRepository = productRepository;
     }
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
     public Mono<ResponseEntity<Product>> registerProduct(@RequestBody Product product) {
         return productRepository.save(product)
                 .map(ResponseEntity::ok);

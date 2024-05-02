@@ -10,13 +10,13 @@ import java.math.BigDecimal;
 @Entity
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private BigDecimal minimumBid;
 
-    private boolean active;
 
+    private boolean active;
 
     public Long getId() {
         return id;
