@@ -1,4 +1,4 @@
-package de.deutschebank.bid;
+package de.dbauction.auction.bid;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;

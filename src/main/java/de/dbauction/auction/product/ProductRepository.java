@@ -1,4 +1,4 @@
-package de.deutschebank.product;
+package de.dbauction.auction.product;
 
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 

@@ -1,4 +1,4 @@
-package de.deutschebank.product;
+package de.dbauction.auction.product;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
