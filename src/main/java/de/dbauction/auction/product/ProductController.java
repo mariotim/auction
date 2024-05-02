@@ -1,11 +1,11 @@
 package de.dbauction.auction.product;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/products")
@@ -19,6 +19,7 @@ public class ProductController {
 
     @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
     public Mono<ResponseEntity<Product>> registerProduct(@RequestBody Product product) {
+        product.setId(UUID.randomUUID().toString());
         return productRepository.save(product)
                 .map(ResponseEntity::ok);
     }
