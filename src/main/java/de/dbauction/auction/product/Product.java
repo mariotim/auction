@@ -1,8 +1,6 @@
 package de.dbauction.auction.product;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import java.math.BigDecimal;
@@ -14,8 +12,17 @@ public class Product {
     private String name;
     private BigDecimal minimumBid;
 
+    private String ownerId;
 
     private boolean active;
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String owerId) {
+        this.ownerId = owerId;
+    }
 
     public String getId() {
         return id;
