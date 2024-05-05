@@ -1,52 +1,41 @@
 package de.dbauction.auction.bid;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
-@Table("bids")
+@Entity
 public class Bid {
     @Id
-    private Long id;
-    private Long userId;
-    private Long productId;
-    private BigDecimal bidAmount;  // Bid amount using BigDecimal
-    private LocalDateTime bidTime;  // Timestamp when the bid was placed
+    private String id;
+    private String bidderId;
+    private String productId;
+    private BigDecimal bidAmount;
+    private long bidTime;
 
-    // Constructors, Getters, and Setters
-    public Bid() {}
-
-    public Bid(Long userId, Long productId, BigDecimal bidAmount, LocalDateTime bidTime) {
-        this.userId = userId;
-        this.productId = productId;
-        this.bidAmount = bidAmount;
-        this.bidTime = bidTime;
-    }
-
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getProductId() {
+    public String getProductId() {
         return productId;
     }
 
-    public void setProductId(Long productId) {
+    public void setProductId(String productId) {
         this.productId = productId;
+    }
+
+    public String getBidderId() {
+        return bidderId;
+    }
+
+    public void setBidderId(String bidderId) {
+        this.bidderId = bidderId;
     }
 
     public BigDecimal getBidAmount() {
@@ -57,11 +46,11 @@ public class Bid {
         this.bidAmount = bidAmount;
     }
 
-    public LocalDateTime getBidTime() {
+    public long getBidTime() {
         return bidTime;
     }
 
-    public void setBidTime(LocalDateTime bidTime) {
+    public void setBidTime(long bidTime) {
         this.bidTime = bidTime;
     }
 }

@@ -5,8 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authorization.AuthorizationDecision;
-import org.springframework.security.authorization.ReactiveAuthorizationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
@@ -17,7 +15,6 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
-import org.springframework.security.web.server.authorization.AuthorizationWebFilter;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import reactor.core.publisher.Mono;
 
@@ -45,7 +42,6 @@ public class SecurityConfig {
                 .authenticationManager(authenticationManager())
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
                 .addFilterAt(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
-//                .addFilterAt(authorizationWebFilter(), SecurityWebFiltersOrder.AUTHORIZATION)
         ;
         return http.build();
     }
@@ -89,9 +85,8 @@ public class SecurityConfig {
                     .flatMap(isValid -> {
                         System.out.println("Token validation result: " + isValid);
                         if (isValid) {
-                            // Potentially decode the token to extract user details and roles
                             return Mono.just(new UsernamePasswordAuthenticationToken(
-                                    authentication.getPrincipal(),  // or a derived user object
+                                    authentication.getPrincipal(),
                                     authentication.getCredentials(),
                                     AuthorityUtils.createAuthorityList("ROLE_USER")));
                         } else {
