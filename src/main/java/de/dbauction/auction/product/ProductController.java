@@ -2,6 +2,7 @@ package de.dbauction.auction.product;
 
 import de.dbauction.auction.bid.Bid;
 import de.dbauction.auction.bid.BidService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +27,15 @@ public class ProductController {
                 .map(ResponseEntity::ok);
     }
 
-    @GetMapping(value = "/end-auction/{productId}")
-    public Flux<ResponseEntity<Bid>> endAuction(@PathVariable String productId) {
-        return bidService.getHighestBid(productId).map(ResponseEntity::ok);
+    @GetMapping(value = "/end-auction/{productId}", produces = "application/json")
+    public Mono<ResponseEntity<Bid>> endAuction(@PathVariable String productId) {
+        return bidService.getHighestBid(productId)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build())
+                .onErrorResume(e -> {
+                    System.out.println(e);
+                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+                });
     }
+
 }

@@ -14,6 +14,17 @@ public class Bid {
     private BigDecimal bidAmount;
     private long bidTime;
 
+    public Bid() {
+    }
+
+    public Bid(String id, String bidderId, String productId, BigDecimal bidAmount, long bidTime) {
+        this.id = id;
+        this.bidderId = bidderId;
+        this.productId = productId;
+        this.bidAmount = bidAmount;
+        this.bidTime = bidTime;
+    }
+
     public String getId() {
         return id;
     }
