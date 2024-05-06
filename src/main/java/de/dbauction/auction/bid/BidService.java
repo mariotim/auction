@@ -23,9 +23,9 @@ public class BidService {
 
     public Mono<Bid> placeBid(Bid bid) {
         bid.setBidTime(System.currentTimeMillis());
-        productRepository.findById(bid.getProductId())
-                .switchIfEmpty(Mono.error(new IllegalStateException("Product doesn't exist")));
-        return bidRepository.save(bid);
+        return productRepository.findById(bid.getProductId())
+                .switchIfEmpty(Mono.error(new IllegalStateException("Product doesn't exist")))
+                .flatMap(product -> bidRepository.save(bid));
     }
 
     public Mono<Bid> getHighestBid(Long productId) {
