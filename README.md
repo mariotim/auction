@@ -44,7 +44,7 @@ Each endpoint requires an Authorization header with Bearer token obtained from U
 curl -X POST http://localhost:8080/api/product/register \
     -H "Content-Type: application/json" \
     -H "Accept: application/json" \
-    -H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzE0OTg1MTU5LCJleHAiOjE3MTUwMjExNTl9.twhFYLwFaKs63QaYq9hM7heAfZ68ORtZqm9mivQIGMOVbR2SF8ZTNJpprR39gRTz2TA5XqvGhJkLEygdFZEyww" \
+    -H "Authorization: Bearer <TOKEN>" \
     -d '{
         "name": "Sample Product",
         "active": true,
