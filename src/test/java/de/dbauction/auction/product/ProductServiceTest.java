@@ -1,6 +1,7 @@
 package de.dbauction.auction.product;
 
 import de.dbauction.auction.AuthenticationService;
+import de.dbauction.auction.exception.AuctionClientErrorException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -24,7 +25,7 @@ class ProductServiceTest {
     @Test
     void save_ReturnsSavedProduct() {
         // given
-        Product product = new Product(); // Assume Product has appropriate getters and setters.
+        Product product = new Product();
         product.setName("Test Product");
 
         String userId = "12345";
@@ -55,7 +56,22 @@ class ProductServiceTest {
         // then
         Mono<Product> save = productService.save(product, authentication);
         StepVerifier.create(save)
-                .expectErrorMatches(exception -> exception instanceof NumberFormatException && exception.getMessage().equals("Invalid user ID"))
+                .expectErrorMatches(exception -> exception instanceof NumberFormatException
+                        && exception.getMessage().equals("Invalid user ID"))
+                .verify();
+    }
+
+    @Test
+    void save_InvalidAuthentication_ThrowsException() {
+        // give
+        Product product = new Product();
+        when(authentication.getCredentials()).thenReturn(null);
+
+        // then
+        Mono<Product> save = productService.save(product, authentication);
+        StepVerifier.create(save)
+                .expectErrorMatches(exception -> exception instanceof AuctionClientErrorException
+                        && exception.getMessage().equals("Authentication failed"))
                 .verify();
     }
 }
