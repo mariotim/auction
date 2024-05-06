@@ -2,10 +2,7 @@ package de.dbauction.auction.product;
 
 import de.dbauction.auction.AuthenticationService;
 import de.dbauction.auction.exception.AuctionClientErrorException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;

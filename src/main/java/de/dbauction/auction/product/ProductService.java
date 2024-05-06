@@ -1,15 +1,10 @@
 package de.dbauction.auction.product;
 
 import de.dbauction.auction.AuthenticationService;
-import de.dbauction.auction.bid.Bid;
 import de.dbauction.auction.exception.AuctionClientErrorException;
-import de.dbauction.auction.exception.AuthenticationException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.util.UUID;
 
 @Service
 public class ProductService {
