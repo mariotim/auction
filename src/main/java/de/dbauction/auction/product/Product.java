@@ -16,6 +16,17 @@ public class Product {
 
     private boolean active;
 
+    public Product() {
+    }
+
+    public Product(Long id, String name, BigDecimal minimumBid, Long ownerId, boolean active) {
+        this.id = id;
+        this.name = name;
+        this.minimumBid = minimumBid;
+        this.ownerId = ownerId;
+        this.active = active;
+    }
+
     public Long getOwnerId() {
         return ownerId;
     }

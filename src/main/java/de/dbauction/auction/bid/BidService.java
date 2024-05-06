@@ -1,6 +1,7 @@
 package de.dbauction.auction.bid;
 
 import de.dbauction.auction.AuthenticationService;
+import de.dbauction.auction.exception.AuctionClientErrorException;
 import de.dbauction.auction.product.ProductRepository;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.security.core.Authentication;
@@ -30,11 +31,20 @@ public class BidService {
         bid.setBidderId(bidderId);
         bid.setBidTime(System.currentTimeMillis());
         return productRepository.findById(bid.getProductId())
-                .switchIfEmpty(Mono.error(new IllegalStateException("Product doesn't exist")))
-                .flatMap(product -> bidRepository.save(bid));
+                .switchIfEmpty(Mono.error(new AuctionClientErrorException("Product doesn't exist")))
+                .flatMap(foundProduct -> {
+                    if (foundProduct.getMinimumBid().compareTo(bid.getBidAmount()) >= 0) {
+                        return Mono.error(new AuctionClientErrorException("Bid is too low"));
+                    }
+                    if (!foundProduct.isActive()) {
+                        return Mono.error(new AuctionClientErrorException("Auction is over"));
+                    } else {
+                        return bidRepository.save(bid);
+                    }
+                });
     }
 
-    public Mono<Bid> getHighestBid(Long productId) {
+    public Mono<Bid> endAuction(Long productId) {
         return r2dbcEntityTemplate.getDatabaseClient()
                 .sql(QUERY)
                 .bind("productId", productId)
@@ -45,6 +55,6 @@ public class BidService {
                         row.get("bid_amount", BigDecimal.class),
                         row.get("bid_time", Long.class)
                 ))
-                .one().switchIfEmpty(Mono.error(new IllegalStateException("No bid found")));
+                .one().switchIfEmpty(Mono.error(new AuctionClientErrorException("No bid found")));
     }
 }

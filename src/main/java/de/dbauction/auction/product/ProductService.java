@@ -2,6 +2,7 @@ package de.dbauction.auction.product;
 
 import de.dbauction.auction.AuthenticationService;
 import de.dbauction.auction.bid.Bid;
+import de.dbauction.auction.exception.AuctionClientErrorException;
 import de.dbauction.auction.exception.AuthenticationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,12 +26,12 @@ public class ProductService {
         long ownerId;
         try {
             if (authentication == null || authentication.getCredentials() == null) {
-                throw new AuthenticationException("Authentication failed");
+                throw new AuctionClientErrorException("Authentication failed");
             }
             ownerId = Long.parseLong(authenticationService.extractUserId(authentication.getCredentials().toString()));
             product.setOwnerId(ownerId);
             return productRepository.save(product);
-        } catch (NumberFormatException | AuthenticationException e) {
+        } catch (NumberFormatException | AuctionClientErrorException e) {
             return Mono.error(e);
         }
 

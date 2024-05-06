@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -29,7 +28,7 @@ public class ProductController {
 
     @GetMapping(value = "/end-auction/{productId}", produces = "application/json")
     public Mono<ResponseEntity<Bid>> endAuction(@PathVariable Long productId) {
-        return bidService.getHighestBid(productId)
+        return bidService.endAuction(productId)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build())
                 .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()));

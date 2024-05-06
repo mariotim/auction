@@ -1,6 +1,7 @@
 package de.dbauction.auction.bid;
 
 import de.dbauction.auction.AuthenticationService;
+import de.dbauction.auction.exception.AuctionClientErrorException;
 import de.dbauction.auction.product.Product;
 import de.dbauction.auction.product.ProductRepository;
 import io.r2dbc.spi.Row;
@@ -23,10 +24,8 @@ import static org.mockito.Mockito.when;
 
 class BidServiceTest {
     private final BidRepository bidRepository = mock(BidRepository.class);
-
     private final ProductRepository productRepository = mock(ProductRepository.class);
     private final R2dbcEntityTemplate r2dbcEntityTemplate = mock(R2dbcEntityTemplate.class);
-
     private final AuthenticationService authenticationService = mock(AuthenticationService.class);
     private final BidService bidService = new BidService(bidRepository, productRepository, r2dbcEntityTemplate, authenticationService);
 
@@ -34,7 +33,7 @@ class BidServiceTest {
     void placeBid_ProductExists_ReturnsSavedBid() {
         //given
         Bid bid = new Bid(1L, 1L, 1L, new BigDecimal("100.00"), System.currentTimeMillis());
-        Product product = new Product();
+        Product product = new Product(1L, "product", new BigDecimal("20.00"), 1L, true);
         Authentication authentication = mock(Authentication.class);
 
         when(productRepository.findById(any(Long.class))).thenReturn(Mono.just(product));
@@ -63,9 +62,44 @@ class BidServiceTest {
 
         //then
         StepVerifier.create(bidService.placeBid(bid, authentication))
-                .expectError(IllegalStateException.class)
+                .expectError(AuctionClientErrorException.class)
                 .verify();
     }
+
+    @Test
+    void placeBid_TooLowBid_ThrowsException() {
+        //given
+        Bid bid = new Bid(1L, 1L, 1L, new BigDecimal("100.00"), System.currentTimeMillis());
+        Product product = new Product(1L, "", new BigDecimal("200.00"), 1L, true);
+        Authentication authentication = mock(Authentication.class);
+
+        when(authentication.getCredentials()).thenReturn("credentials");
+        when(authenticationService.extractUserId(any())).thenReturn("1");
+        when(productRepository.findById(any(Long.class))).thenReturn(Mono.just(product));
+
+        //then
+        StepVerifier.create(bidService.placeBid(bid, authentication))
+                .expectErrorMatches(exception -> exception instanceof AuctionClientErrorException && exception.getMessage().equals("Bid is too low"))
+                .verify();
+    }
+
+    @Test
+    void placeBid_AuctionOver_ThrowsException() {
+        //given
+        Bid bid = new Bid(1L, 1L, 1L, new BigDecimal("100.00"), System.currentTimeMillis());
+        Product product = new Product(1L, "", new BigDecimal("20.00"), 1L, false);
+        Authentication authentication = mock(Authentication.class);
+
+        when(authentication.getCredentials()).thenReturn("credentials");
+        when(authenticationService.extractUserId(any())).thenReturn("1");
+        when(productRepository.findById(any(Long.class))).thenReturn(Mono.just(product));
+
+        //then
+        StepVerifier.create(bidService.placeBid(bid, authentication))
+                .expectErrorMatches(exception -> exception instanceof AuctionClientErrorException && exception.getMessage().equals("Auction is over"))
+                .verify();
+    }
+
     @Test
     void getHighestBid_ReturnsHighestBid() {
         //given
@@ -92,7 +126,7 @@ class BidServiceTest {
         when(fetchSpec.one()).thenReturn(Mono.just(expectedBid));
 
         //when
-        Mono<Bid> result = bidService.getHighestBid(productId);
+        Mono<Bid> result = bidService.endAuction(productId);
 
         //then
         StepVerifier.create(result)
@@ -128,11 +162,11 @@ class BidServiceTest {
         when(fetchSpec.one()).thenReturn(Mono.empty());
 
         //when
-        Mono<Bid> result = bidService.getHighestBid(productId);
+        Mono<Bid> result = bidService.endAuction(productId);
 
         //then
         StepVerifier.create(result)
-                .expectErrorMatches(exception -> exception instanceof IllegalStateException && exception.getMessage().equals("No bid found"))
+                .expectErrorMatches(exception -> exception instanceof AuctionClientErrorException && exception.getMessage().equals("No bid found"))
                 .verify();
     }
 
