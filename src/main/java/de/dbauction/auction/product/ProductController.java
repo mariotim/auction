@@ -28,14 +28,11 @@ public class ProductController {
     }
 
     @GetMapping(value = "/end-auction/{productId}", produces = "application/json")
-    public Mono<ResponseEntity<Bid>> endAuction(@PathVariable String productId) {
+    public Mono<ResponseEntity<Bid>> endAuction(@PathVariable Long productId) {
         return bidService.getHighestBid(productId)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build())
-                .onErrorResume(e -> {
-                    System.out.println(e);
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
-                });
+                .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()));
     }
 
 }

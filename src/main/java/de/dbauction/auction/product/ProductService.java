@@ -21,13 +21,8 @@ public class ProductService {
     }
 
     public Mono<Product> save(Product product, Authentication authentication) {
-        product.setId(UUID.randomUUID().toString());
-        String ownerId = authenticationService.extractUserId(authentication.getCredentials().toString());
+        Long ownerId = Long.valueOf(authenticationService.extractUserId(authentication.getCredentials().toString()));
         product.setOwnerId(ownerId);
         return productRepository.save(product);
-    }
-
-    public Mono<Bid> endAuction(String productId) {
-        return null;
     }
 }

@@ -1,23 +1,23 @@
 package de.dbauction.auction.bid;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 
-@Entity
+@Table
 public class Bid {
     @Id
-    private String id;
-    private String bidderId;
-    private String productId;
+    private Long id;
+    private Long bidderId;
+    private Long productId;
     private BigDecimal bidAmount;
     private long bidTime;
 
     public Bid() {
     }
 
-    public Bid(String id, String bidderId, String productId, BigDecimal bidAmount, long bidTime) {
+    public Bid(Long id, Long bidderId, Long productId, BigDecimal bidAmount, long bidTime) {
         this.id = id;
         this.bidderId = bidderId;
         this.productId = productId;
@@ -25,28 +25,28 @@ public class Bid {
         this.bidTime = bidTime;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getProductId() {
-        return productId;
-    }
-
-    public void setProductId(String productId) {
-        this.productId = productId;
-    }
-
-    public String getBidderId() {
+    public Long getBidderId() {
         return bidderId;
     }
 
-    public void setBidderId(String bidderId) {
+    public void setBidderId(Long bidderId) {
         this.bidderId = bidderId;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
     public BigDecimal getBidAmount() {

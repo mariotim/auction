@@ -1,34 +1,34 @@
 package de.dbauction.auction.product;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 
-@Entity
+@Table
 public class Product {
     @Id
-    private String id;
+    private Long id;
     private String name;
     private BigDecimal minimumBid;
 
-    private String ownerId;
+    private Long ownerId;
 
     private boolean active;
 
-    public String getOwnerId() {
+    public Long getOwnerId() {
         return ownerId;
     }
 
-    public void setOwnerId(String owerId) {
-        this.ownerId = owerId;
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

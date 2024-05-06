@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Service
 public class BidService {
@@ -23,19 +22,20 @@ public class BidService {
     }
 
     public Mono<Bid> placeBid(Bid bid) {
-        bid.setId(UUID.randomUUID().toString());
         bid.setBidTime(System.currentTimeMillis());
+        productRepository.findById(bid.getProductId())
+                .switchIfEmpty(Mono.error(new IllegalStateException("Product doesn't exist")));
         return bidRepository.save(bid);
     }
 
-    public Mono<Bid> getHighestBid(String productId) {
+    public Mono<Bid> getHighestBid(Long productId) {
         return r2dbcEntityTemplate.getDatabaseClient()
                 .sql(QUERY)
                 .bind("productId", productId)
                 .map((row, meta) -> new Bid(
-                        row.get("id", String.class),
-                        row.get("bidder_id", String.class),
-                        row.get("product_id", String.class),
+                        row.get("id", Long.class),
+                        row.get("bidder_id", Long.class),
+                        row.get("product_id", Long.class),
                         row.get("bid_amount", BigDecimal.class),
                         row.get("bid_time", Long.class)
                 ))

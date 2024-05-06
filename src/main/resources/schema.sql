@@ -1,17 +1,17 @@
 CREATE TABLE PRODUCT
 (
-    id          VARCHAR(50) NOT NULL PRIMARY KEY,
-    name        VARCHAR(50) NOT NULL,
-    owner_id    VARCHAR(50) NOT NULL,
-    minimum_bid NUMERIC     NOT NULL,
+    id          BIGINT         NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name        VARCHAR(50)    NOT NULL,
+    owner_id    BIGINT         NOT NULL,
+    minimum_bid DECIMAL(10, 2) NOT NULL, -- Assuming bid amounts can have cents
     active      bool
 );
 
 CREATE TABLE BID
 (
-    id         VARCHAR(50) NOT NULL PRIMARY KEY,
-    bidder_id  VARCHAR(50) NOT NULL,
-    product_id VARCHAR(50) NOT NULL,
-    bid_amount VARCHAR(50) NOT NULL,
-    bid_time   VARCHAR(50) NOT NULL
+    id         BIGINT         NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    bidder_id  BIGINT         NOT NULL,
+    product_id BIGINT         NOT NULL,
+    bid_amount DECIMAL(10, 2) NOT NULL, -- Assuming bid amounts can have cents
+    bid_time   BIGINT   NOT NULL
 );
