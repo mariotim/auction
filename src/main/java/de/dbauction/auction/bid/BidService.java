@@ -1,7 +1,9 @@
 package de.dbauction.auction.bid;
 
+import de.dbauction.auction.AuthenticationService;
 import de.dbauction.auction.product.ProductRepository;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -12,16 +14,20 @@ public class BidService {
     private final BidRepository bidRepository;
     private final ProductRepository productRepository;
     private final R2dbcEntityTemplate r2dbcEntityTemplate;
+    private final AuthenticationService authenticationService;
 
     private final static String QUERY = "SELECT * FROM bid WHERE product_id = :productId ORDER BY bid_amount DESC LIMIT 1";
 
-    public BidService(BidRepository bidRepository, ProductRepository productRepository, R2dbcEntityTemplate r2dbcEntityTemplate) {
+    public BidService(BidRepository bidRepository, ProductRepository productRepository, R2dbcEntityTemplate r2dbcEntityTemplate, AuthenticationService authenticationService) {
         this.bidRepository = bidRepository;
         this.productRepository = productRepository;
         this.r2dbcEntityTemplate = r2dbcEntityTemplate;
+        this.authenticationService = authenticationService;
     }
 
-    public Mono<Bid> placeBid(Bid bid) {
+    public Mono<Bid> placeBid(Bid bid, Authentication authentication) {
+        Long bidderId = Long.valueOf(authenticationService.extractUserId(authentication.getCredentials().toString()));
+        bid.setBidderId(bidderId);
         bid.setBidTime(System.currentTimeMillis());
         return productRepository.findById(bid.getProductId())
                 .switchIfEmpty(Mono.error(new IllegalStateException("Product doesn't exist")))
@@ -39,6 +45,6 @@ public class BidService {
                         row.get("bid_amount", BigDecimal.class),
                         row.get("bid_time", Long.class)
                 ))
-                .one();
+                .one().switchIfEmpty(Mono.error(new IllegalStateException("No bid found")));
     }
 }

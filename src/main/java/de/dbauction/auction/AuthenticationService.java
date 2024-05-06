@@ -14,17 +14,15 @@ public class AuthenticationService {
     private final Key key;
     public AuthenticationService(@Value("${jwt.secret}")  String secretKey) {
         byte[] keyBytes = java.util.Base64.getDecoder().decode(secretKey);
-
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     public Mono<Boolean> validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parser()
+            Jwts.parser()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
-            extractUserId(token);
             return Mono.just(true);
         } catch (Exception e) {
             return Mono.just(false);

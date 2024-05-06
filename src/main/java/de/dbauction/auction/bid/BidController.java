@@ -9,19 +9,14 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/bid")
 public class BidController {
     private final BidService bidService;
-    private final AuthenticationService authenticationService;
 
-
-    public BidController(BidService bidService, AuthenticationService authenticationService) {
+    public BidController(BidService bidService) {
         this.bidService = bidService;
-        this.authenticationService = authenticationService;
     }
 
     @PostMapping(value = "", consumes = "application/json", produces = "application/json")
     public Mono<Bid> placeBid(@RequestBody Bid bid, Authentication authentication) {
-        Long bidderId = Long.valueOf(authenticationService.extractUserId(authentication.getCredentials().toString()));
-        bid.setBidderId(bidderId);
-        return bidService.placeBid(bid);
+        return bidService.placeBid(bid,authentication);
     }
 }
 
